@@ -26,5 +26,5 @@ if __name__ == '__main__':
     path_edge = './citeseer_edges.txt'
     path_node_labels = './citeseer_node_labels.txt'
     edge_list, node_labels_list = load_data(path_edge=path_edge, path_node_labels=path_node_labels)
-    print(edge_list)
+    # print(edge_list)
     print(node_labels_list)
