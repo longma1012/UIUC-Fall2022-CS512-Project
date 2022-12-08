@@ -77,7 +77,7 @@ def list2array(node_labels_list, edge_list, node_features_list):
     # print(edge_list)
     # node_features_ndarray = np.array(node_features_list, dtype=np.int64)
     _node_labels = np.array(node_labels_list)
-    print(node_labels_list)
+    # print(node_labels_list)
     node_labels_ndarray = np.array(node_labels_list, dtype=np.int64).T[1]
     edge_features_ndarray = np.ones(N_edges)
     edges_src_ndarray = np.array(edge_list).T[0]

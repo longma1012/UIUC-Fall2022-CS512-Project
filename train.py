@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from dgl.nn import GraphConv
+from dgl.nn import DenseGraphConv
 
 from preprocess_data import CiteseerDataset
 from preprocess_data import list2array
@@ -16,27 +17,29 @@ from load_data_facebook import load_data
 class GCN(nn.Module):
     def __init__(self, in_feats, h_feats1, h_feats2, h_feats3, h_feats4, h_feats5, num_classes):
         super(GCN, self).__init__()
-        self.conv1 = GraphConv(in_feats, h_feats1)
-        self.conv2 = GraphConv(h_feats1, h_feats2)
-        self.conv3 = GraphConv(h_feats2, h_feats3)
-        self.conv4 = GraphConv(h_feats3, h_feats4)
-        self.conv5 = GraphConv(h_feats4, h_feats5)
-        self.conv6 = GraphConv(h_feats5, num_classes)
+        self.conv1 = DenseGraphConv(in_feats, h_feats1)
+        self.conv2 = DenseGraphConv(h_feats1, h_feats2)
+        self.conv3 = DenseGraphConv(h_feats2, h_feats3)
+        self.conv4 = DenseGraphConv(h_feats3, h_feats4)
+        self.conv5 = DenseGraphConv(h_feats4, h_feats5)
+        self.conv6 = DenseGraphConv(h_feats5, num_classes)
 
 
 
     def forward(self, g, in_feat):
-        h = self.conv1(g, in_feat)
+        # g = g.astype(torch.float32)
+        adj = g.adj()
+        h = self.conv1(adj, in_feat)
         h = F.relu(h)
-        h = self.conv2(g, h)
+        h = self.conv2(adj, h)
         h = F.relu(h)
-        h = self.conv3(g, h)
+        h = self.conv3(adj, h)
         h = F.relu(h)
-        h = self.conv4(g, h)
+        h = self.conv4(adj, h)
         h = F.relu(h)
-        h = self.conv5(g, h)
+        h = self.conv5(adj, h)
         h = F.relu(h)
-        h = self.conv6(g, h)
+        h = self.conv6(adj, h)
         return h
 
 def train(g, model):
@@ -117,8 +120,8 @@ if __name__ == '__main__':
     else: in_feat = graph.ndata['feat'].shape[1]
 
     # Create the model with given dimensions
-    # model = GCN(in_feat, 16, 32, 64, 128, 64, dataset.num_classes)
-    model = GCN(in_feat, 16, 128, 256, 64, 16, dataset.num_classes)
+    model = GCN(in_feat, 16, 32, 64, 128, 64, dataset.num_classes)
+    # model = GCN(in_feat, 16, 128, 256, 64, 16, dataset.num_classes)
     train(graph, model)
 
     # dataset = dgl.data.CoraGraphDataset()
