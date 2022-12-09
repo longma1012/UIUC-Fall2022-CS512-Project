@@ -102,17 +102,17 @@ def train(g, model):
 
 if __name__ == '__main__':
 
-    path_edge = './citeseer_edges.txt'
-    path_node_labels = './citeseer_node_labels.txt'
-
-    _edge_list, node_labels_list = load_data(path_edge, path_node_labels)
-    edge_list = []
-    for edge in _edge_list:
-        edge_list.append(edge)
-        edge_list.append([edge[1], edge[0]])
-    N_nodes, N_edges, node_indexes, node_labels_ndarray, edge_features_ndarray, edges_src_ndarray, edges_dst_ndarray = list2array(node_labels_list=node_labels_list, edge_list=edge_list)
-    dataset = CiteseerDataset(N_nodes=N_nodes, N_edges=N_edges, node_indexes=node_indexes, node_labels_ndarray=node_labels_ndarray, edge_features_ndarray=edge_features_ndarray, edges_src_ndarray=edges_src_ndarray, edges_dst_ndarray=edges_dst_ndarray)
-    graph = dataset[0]
+    # path_edge = './citeseer_edges.txt'
+    # path_node_labels = './citeseer_node_labels.txt'
+    #
+    # _edge_list, node_labels_list = load_data(path_edge, path_node_labels)
+    # edge_list = []
+    # for edge in _edge_list:
+    #     edge_list.append(edge)
+    #     edge_list.append([edge[1], edge[0]])
+    # N_nodes, N_edges, node_indexes, node_labels_ndarray, edge_features_ndarray, edges_src_ndarray, edges_dst_ndarray = list2array(node_labels_list=node_labels_list, edge_list=edge_list)
+    # dataset = CiteseerDataset(N_nodes=N_nodes, N_edges=N_edges, node_indexes=node_indexes, node_labels_ndarray=node_labels_ndarray, edge_features_ndarray=edge_features_ndarray, edges_src_ndarray=edges_src_ndarray, edges_dst_ndarray=edges_dst_ndarray)
+    # graph = dataset[0]
 
 
     # path_edge = './facebook_large/musae_facebook_edges.csv'
@@ -130,14 +130,14 @@ if __name__ == '__main__':
     # graph = dgl.add_self_loop(graph)
 
 
-    if len(graph.ndata['feat'].shape) == 1: in_feat = 1
-    else: in_feat = graph.ndata['feat'].shape[1]
+    # if len(graph.ndata['feat'].shape) == 1: in_feat = 1
+    # else: in_feat = graph.ndata['feat'].shape[1]
 
     # Create the model with given dimensions
-    model = GCN(in_feat, 64, 128, 256, 512, 256, 128, 64, 32, 16, dataset.num_classes)
-    train(graph, model)
+    # model = GCN(in_feat, 64, 128, 256, 512, 256, 128, 64, 32, 16, dataset.num_classes)
+    # train(graph, model)
 
-    # dataset = dgl.data.CoraGraphDataset()
-    # g = dataset[0]
-    # model = GCN(g.ndata['feat'].shape[1], 64, 128, 256, 64, 16, dataset.num_classes)
-    # train(g, model)
+    dataset = dgl.data.CoraGraphDataset()
+    g = dataset[0]
+    model = GCN(g.ndata['feat'].shape[1], 64, 128, 256, 512, 256, 128, 64, 32, 16, dataset.num_classes)
+    train(g, model)

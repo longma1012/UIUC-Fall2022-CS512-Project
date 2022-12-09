@@ -1,4 +1,5 @@
 import dgl
+import torch
 import numpy as np
 from deeprobust.graph.data import Dataset
 from deeprobust.graph.global_attack import DICE
@@ -9,8 +10,11 @@ from train import train
 
 dataset = dgl.data.CoraGraphDataset()
 g = dataset[0]
-n = g.num_nodes()
+n_nodes = g.num_nodes()
 
+node_features = g.ndata['feat']
+node_labels = g.ndata['label']
+# edge_features = g.edata['weight']
 
 
 
@@ -23,7 +27,7 @@ labels = g.ndata['label'].numpy()
 
 model = DICE()
 
-model.attack(adj, labels, n_perturbations=10)
+model.attack(adj, labels, n_perturbations=0)
 modified_adj = model.modified_adj
 coo_mod_adj = modified_adj.tocoo()
 rows = []
@@ -38,11 +42,29 @@ for i in range(len(rows)):
     edges.append((rows[i], cols[i]))
 
 graph = dgl.DGLGraph()
-graph.add_nodes(n)
+graph.add_nodes(n_nodes)
 graph.add_edge(rows, cols)
 
+graph.ndata['feat'] = node_features
+graph.ndata['label'] = node_labels
+# graph.edata['weight'] = edge_features
+
+
+n_train = int(n_nodes * 0.6)
+n_val = int(n_nodes * 0.2)
+train_mask = torch.zeros(n_nodes, dtype=torch.bool)
+val_mask = torch.zeros(n_nodes, dtype=torch.bool)
+test_mask = torch.zeros(n_nodes, dtype=torch.bool)
+train_mask[:n_train] = True
+val_mask[n_train:n_train + n_val] = True
+test_mask[n_train + n_val:] = True
+graph.ndata['train_mask'] = train_mask
+graph.ndata['val_mask'] = val_mask
+graph.ndata['test_mask'] = test_mask
+graph = dgl.add_self_loop(graph)
 
 if len(graph.ndata['feat'].shape) == 1: in_feat = 1
 else: in_feat = graph.ndata['feat'].shape[1]
+
 model = GCN(in_feat, 64, 128, 256, 512, 256, 128, 64, 32, 16, dataset.num_classes)
 train(graph, model)
