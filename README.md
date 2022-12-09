@@ -15,3 +15,7 @@ dgl 0.9.1
 ```
 pip install dgl
 ```
+deeprobust
+```
+pip install deeprobust
+```
