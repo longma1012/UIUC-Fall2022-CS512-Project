@@ -54,7 +54,7 @@ class GCN(nn.Module):
 
         return h
 
-def train(g, model):
+def train(g, model,result_path='results/original_output_citeseer.txt'):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     best_val_acc = 0
     best_test_acc = 0
@@ -64,6 +64,9 @@ def train(g, model):
     train_mask = g.ndata['train_mask']
     val_mask = g.ndata['val_mask']
     test_mask = g.ndata['test_mask']
+    with open(result_path, "w") as f:
+            f.write("The result is shown here.\n")
+
     for e in range(1001):
         # Forward
         logits = model(g, features)
@@ -92,7 +95,7 @@ def train(g, model):
         loss.backward()
         optimizer.step()
 
-        with open("original_output_citeseer.txt", "a") as f:
+        with open(result_path, "a") as f:
             if e % 5 == 0:
                 f.write('In epoch {}, loss: {:.3f}, train acc: {:.3f}, val acc: {:.3f} (best {:.3f}), test acc: {:.3f} (best {:.3f})\n'.format(
                     e, loss, train_acc, val_acc, best_val_acc, test_acc, best_test_acc))
