@@ -6,6 +6,16 @@ Version of externel library:
 
 Python 3.9.13
 
-torch 1.12.1+cpu
+for cpu torch >=  1.12.1
+```
+pip install torch
+```
 
 dgl 0.9.1
+```
+pip install dgl
+```
+deeprobust
+```
+pip install deeprobust
+```
