@@ -97,9 +97,21 @@ def eval_NodeEmbeddingadd():
     plt.savefig('results/eval_NodeEmbedding_add.jpg')
     plt.show()
 
+def eval_pooling():
+    x = loadx('train.txt')
+    res_train = load('train.txt')
+    res_train_pooling = load('train_with_pooling.txt')
+    plt.plot(x,res_train,label="original train")
+    plt.plot(x,res_train_pooling,label="train with pooling")
+    plt.xlabel("epoh")
+    plt.ylabel("accuracy")
+    plt.legend(loc = "best")
+    plt.savefig('results/eval_train_with_pooling.jpg')
+    plt.show()
 
 eval_dice()
 eval_randomadd()
 eval_randomremove()
 eval_NodeEmbeddingremove()
 eval_NodeEmbeddingadd()
+eval_pooling()

@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from dgl.nn import GraphConv
-from dgl.nn import SAGEConv
+from dgl.nn import MaxPooling
 
 from load_data import load_data
 from preprocess_data import CiteseerDataset
@@ -18,6 +18,7 @@ from preprocess_data_facebook import FacebookDataset
 class GCN(nn.Module):
     def __init__(self, in_feats, h_feats1, h_feats2, h_feats3, h_feats4, h_feats5, h_feats6, h_feats7, h_feats8, h_feats9, num_classes):
         super(GCN, self).__init__()
+        self.pooling = MaxPooling()
         self.conv1 = GraphConv(in_feats, h_feats1)
         self.conv2 = GraphConv(h_feats1, h_feats2)
         self.conv3 = GraphConv(h_feats2, h_feats3)
@@ -34,27 +35,36 @@ class GCN(nn.Module):
     def forward(self, g, in_feat):
         h = self.conv1(g, in_feat)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv2(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv3(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv4(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv5(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv6(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv7(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv8(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv9(g, h)
         h = F.relu(h)
+        # h = self.pooling(g, h)
         h = self.conv10(g, h)
 
         return h
 
-def train(g, model,result_path='results/original_output_citeseer.txt'):
+def train(g, model,result_path='results/train.txt'):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     best_val_acc = 0
     best_test_acc = 0
