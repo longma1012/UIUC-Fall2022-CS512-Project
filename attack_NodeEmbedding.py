@@ -24,10 +24,10 @@ feats = g.ndata['feat'].numpy()
 labels = g.ndata['label'].numpy()
 
 
-for n in [1, 100,500,1000,2000]:
+for n in [1, 100, 200,300, 500]:
     model = NodeEmbeddingAttack()
-    # model.attack(adj, n_perturbations=n, attack_type="remove")
-    model.attack(adj, n_perturbations=n, attack_type="add",n_candidates=10000)
+    model.attack(adj, n_perturbations=n, attack_type="remove")
+    # model.attack(adj, n_perturbations=n, attack_type="add",n_candidates=10000)
     modified_adj = model.modified_adj
     coo_mod_adj = modified_adj.tocoo()
     rows = []
@@ -67,5 +67,5 @@ for n in [1, 100,500,1000,2000]:
     else: in_feat = graph.ndata['feat'].shape[1]
 
     model = GCN(in_feat, 64, 128, 256, 512, 256, 128, 64, 32, 16, dataset.num_classes)
-    train(graph, model,result_path='results/NodeEmbedding'+str(n)+'add.txt')
+    train(graph, model,result_path='results/NodeEmbedding'+str(n)+'remove.txt')
 
